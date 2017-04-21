@@ -11,7 +11,7 @@
     {{ template "header" . }}
     <h2>Survey</h2>
     <p>Thank you for downloading this app. Before you begin rating works, please fill out this short survey. </p>
-    <form class="survey">
+    <form class="survey" method="post" action="/survey">
       <div class="form-group">
 	<label for="visitor_age">What is your age?</label>
 	<select class="form-control" name="visitor_age" id="visitor_age">

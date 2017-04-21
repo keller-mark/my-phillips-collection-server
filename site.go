@@ -1,7 +1,7 @@
 package main
 
 import (
-  _ "fmt"
+  "fmt"
   "strconv"
   "log"
   "net/http"
@@ -36,6 +36,8 @@ func survey(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 func surveySubmit(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   /* echo json results of submission */
+
+  fmt.Fprintf(w, "Survey successfully submitted\n")
 }
 
 func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
