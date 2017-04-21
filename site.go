@@ -11,8 +11,14 @@ import (
 )
 
 
-var templates = template.Must(template.ParseFiles("templates/index.html", "templates/survey.html"))
-var settings = &Settings{Site: "Tinder for Museums"}
+var templates = template.Must(template.ParseFiles(
+  "templates/index.html", 
+  "templates/survey.html", 
+  "templates/header.html", 
+  "templates/footer.html",
+  "templates/sources.html",
+))
+var settings = &Settings{Site: "\"Tinder for Museums\""}
 
 func home(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
   renderTemplate(w, "index", settings)

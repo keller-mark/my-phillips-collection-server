@@ -3,8 +3,12 @@
 <html>
   <head>
     <title>{{ .Site }}</title>
+    {{ template "sources" }}
   </head>
   <body>
-    <h1>{{ .Site }}</h1>
+    {{ template "header" }}
+    <h2>Home</h2>
+
+    {{ template "footer" }}
   </body>
 </html>
