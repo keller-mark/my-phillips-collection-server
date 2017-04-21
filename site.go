@@ -36,8 +36,11 @@ func survey(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 func surveySubmit(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   /* echo json results of submission */
-
-  fmt.Fprintf(w, "Survey successfully submitted\n")
+  db := DB()
+  age, _ := strconv.Atoi(r.FormValue("visitor_age"))
+  user := User{Age: age}
+  db.Create(&user)
+  fmt.Fprintf(w, "Survey successfully submitted\n Gender value: %s\n", r.FormValue("visitor_gender"));
 }
 
 func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
