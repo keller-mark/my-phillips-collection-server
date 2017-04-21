@@ -18,13 +18,18 @@ func home(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
   renderTemplate(w, "index", settings)
 }
 
-func survey(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  settings.UserID, _ = strconv.Atoi(params.ByName("user_id"))
+func work(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  settings.WorkID, _ = strconv.Atoi(params.ByName("work_id"))
+  /* echo json */
+}
+
+
+func survey(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
   renderTemplate(w, "survey", settings)
 }
 
 func surveySubmit(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  renderTemplate(w, "survey", settings)
+  /* echo json results of submission */
 }
 
 func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
@@ -40,9 +45,9 @@ func main() {
   router := httprouter.New()
 
   router.GET("/", home)
-  router.GET("/survey/:user_id", survey)
-  router.POST("/survey/:user_id", surveySubmit)
-
+  router.GET("/survey", survey)
+  router.POST("/survey", surveySubmit)
+  router.GET("/work/:work_id", work)
   router.ServeFiles("/static/*filepath", http.Dir("./static/"))
 
   log.Fatal(http.ListenAndServe(":80", router))
