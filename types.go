@@ -1,5 +1,6 @@
 package main
 
 type Settings struct {
-  Site string
+  Site	    string
+  UserID    int
 }
