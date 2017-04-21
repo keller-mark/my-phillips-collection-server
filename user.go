@@ -6,5 +6,7 @@ import (
 
 type User struct {
   gorm.Model
-  survey_id   int `gorm:"column:survey_id"`
+  Age	    int	    `gorm:"column:age"`
+  Gender    int	    `gorm:"column:gender"`
+  Location  string  `gorm:"column:location"`
 }
