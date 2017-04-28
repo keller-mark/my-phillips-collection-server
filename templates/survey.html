@@ -11,7 +11,7 @@
     {{ template "header" . }}
     <h2>Survey</h2>
     <p>Thank you for downloading this app. Before you begin rating works, please fill out this short survey. </p>
-    <form class="survey" method="post" action="/survey">
+    <form class="survey" method="post" action="/survey" id="survey_form">
       <div class="form-group">
 	<label for="visitor_age">What is your age?</label>
 	<select class="form-control" name="visitor_age" id="visitor_age">
@@ -27,9 +27,9 @@
 	<label for="visitor_gender">What is your gender?</label>
 	<select class="form-control" name="visitor_gender" id="visitor_gender">
 	  <option value="none"></option>
-	  <option value="M">Male</option>
-	  <option value="F">Female</option>
-	  <option value="O">Other</option>
+	  <option value="1">Male</option>
+	  <option value="2">Female</option>
+	  <option value="3">Other</option>
 	</select>
       </div>
       <div class="form-group">
@@ -287,7 +287,7 @@
 	</select>
       </div>
 	<div class="form-group">
-	<label for="visitor_state">Which state are you from?</label>
+	<label for="visitor_state" id="visitor_state_label">Which state are you from?</label>
 	<select class="form-control" name="visitor_state" id="visitor_state">
 	<option value="none"></option>
 	<option value="AL">Alabama</option>
@@ -350,6 +350,29 @@
     </form>
     
     {{ template "footer" }}
+
+    <script>
+      $(function() {
+	$('#survey_form').on('submit', function(e) {
+	  e.preventDefault();
+	  if ($('#visitor_age').val() == 'none' || $('#visitor_gender').val() == 'none' || $('#visitor_country').val() == 'none' || ($('#visitor_country').val() == 'US' && $('#visitor_state').val() == 'none')) {
+	    alert("Please answer all questions!");
+	  } else {
+	    $('#survey_form').unbind('submit').submit();
+	  }
+	});
+	$('#visitor_country').on('input', function(e) {
+	  if ($('#visitor_country').val() != 'US') {
+	    $('#visitor_state').hide();
+	    $('#visitor_state').val('none');
+	    $('#visitor_state_label').hide();
+	  } else {
+	    $('#visitor_state').show();
+	    $('#visitor_state_label').show();
+	  }
+	});
+      });
+    </script>
 	</div>
       </div>
     </div>

@@ -8,5 +8,6 @@ type User struct {
   gorm.Model
   Age	    int	    `gorm:"column:age"`
   Gender    int	    `gorm:"column:gender"`
-  Location  string  `gorm:"column:location"`
+  Country   string  `gorm:"column:country"`
+  State	    string  `gorm:"column:state"`
 }

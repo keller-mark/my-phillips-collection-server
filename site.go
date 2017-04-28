@@ -18,7 +18,7 @@ var templates = template.Must(template.ParseFiles(
   "templates/footer.html",
   "templates/sources.html",
 ))
-var settings = &Settings{Site: "\"Tinder for Museums\""}
+var settings = &Settings{Site: "Project Name"}
 
 func home(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
   renderTemplate(w, "index", settings)
@@ -38,7 +38,11 @@ func surveySubmit(w http.ResponseWriter, r *http.Request, params httprouter.Para
   /* echo json results of submission */
   db := DB()
   age, _ := strconv.Atoi(r.FormValue("visitor_age"))
-  user := User{Age: age}
+  gender, _ := strconv.Atoi(r.FormValue("visitor_gender"))
+  country := r.FormValue("visitor_country")
+  state := r.FormValue("visitor_state")
+
+  user := User{Age: age, Gender: gender, Country: country, State: state}
   db.Create(&user)
   fmt.Fprintf(w, "Survey successfully submitted\n Gender value: %s\n", r.FormValue("visitor_gender"));
 }
