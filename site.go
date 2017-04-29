@@ -42,7 +42,12 @@ func surveySubmit(w http.ResponseWriter, r *http.Request, params httprouter.Para
   country := r.FormValue("visitor_country")
   state := r.FormValue("visitor_state")
 
-  user := User{Age: age, Gender: gender, Country: country, State: state}
+  user := User{
+    Age: age, 
+    Gender: gender, 
+    Country: country, 
+    State: state,
+  }
   db.Create(&user)
   fmt.Fprintf(w, "Survey successfully submitted\n Gender value: %s\n", r.FormValue("visitor_gender"));
 }
@@ -64,6 +69,8 @@ func main() {
   router.POST("/survey", surveySubmit)
   router.GET("/work/:work_id", work)
   router.ServeFiles("/static/*filepath", http.Dir("./static/"))
+
+  // ParseWorksCSV("../../../perm_coll_filtered_20170201.csv")
 
   log.Fatal(http.ListenAndServe(":80", router))
 }
