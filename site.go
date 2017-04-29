@@ -1,11 +1,11 @@
 package main
 
 import (
-  "fmt"
+  _ "fmt"
   "strconv"
   "log"
   "net/http"
-  _ "encoding/json"
+  "encoding/json"
   "html/template"
   "github.com/julienschmidt/httprouter"
 )
@@ -35,7 +35,6 @@ func survey(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func surveySubmit(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  /* echo json results of submission */
   db := DB()
   age, _ := strconv.Atoi(r.FormValue("visitor_age"))
   gender, _ := strconv.Atoi(r.FormValue("visitor_gender"))
@@ -49,7 +48,22 @@ func surveySubmit(w http.ResponseWriter, r *http.Request, params httprouter.Para
     State: state,
   }
   db.Create(&user)
-  fmt.Fprintf(w, "Survey successfully submitted\n Gender value: %s\n", r.FormValue("visitor_gender"));
+  
+  var surveyResult struct {
+    Success bool
+    Message string
+    UserID  uint
+  }
+  surveyResult.Success = true
+  surveyResult.Message = "Survey successfully submitted"
+  surveyResult.UserID = user.ID
+  
+  b, err := json.Marshal(surveyResult)
+  if err != nil {
+    log.Fatal(err)
+  }
+  w.Header().Set("Content-Type", "application/json")
+  w.Write(b)
 }
 
 func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
