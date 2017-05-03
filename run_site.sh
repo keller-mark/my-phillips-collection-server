@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PS_LINE=`sudo ps | grep fire`
+PS_LINE=`sudo ps -A | grep fire`
 if [ "$PS_LINE" ]; then
   echo "Process found"
   PID=`echo "$PS_LINE" | cut -d' ' -f2`

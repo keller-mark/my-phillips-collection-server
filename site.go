@@ -1,7 +1,7 @@
 package main
 
 import (
-  _ "fmt"
+  "fmt"
   "strconv"
   "log"
   "net/http"
@@ -25,8 +25,19 @@ func home(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func work(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  settings.WorkID, _ = strconv.Atoi(params.ByName("work_id"))
+  db := DB()
+  scannedWork, _ := strconv.Atoi(params.ByName("work_id"))
+  foundWork := []Work{}
+  db.Table("works").Find(&foundWork, "id = ?", scannedWork)
+  fmt.Println(foundWork[0].Title)
   /* echo json */
+  w.Header().Set("Content-Type", "application/json")
+  jData, err := json.Marshal(foundWork[0])
+  if err != nil {
+    panic(err)
+    return
+  }
+  w.Write(jData)
 }
 
 
@@ -74,6 +85,29 @@ func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
   }
 }
 
+func newPreference(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  db := DB()
+  user_id, _ := strconv.Atoi(r.FormValue("user_id"))
+  work_id, _ := strconv.Atoi(r.FormValue("work_id"))
+  liked, _ := strconv.Atoi(r.FormValue("liked"))
+//  fmt.Println(user_id, work_id, liked)
+
+  preferenceSubmit := Preference{
+    User_id: user_id,
+    Work_id: work_id,
+    Liked: liked,
+  }
+//  fmt.Println(preferenceSubmit)
+  foundPreferences := []Preference{}
+  db.Table("preferences").Find(&foundPreferences, "user_id = ? AND work_id = ?", user_id, work_id)
+//  fmt.Println(foundPreferences)
+  if(len(foundPreferences) == 0){
+    db.Create(&preferenceSubmit)
+  } else if (foundPreferences[0].Liked != liked) {
+    foundPreferences[0].Liked = liked
+    db.Save(&foundPreferences[0])
+  }
+}
 
 func main() { 
   router := httprouter.New()
@@ -82,6 +116,7 @@ func main() {
   router.GET("/survey", survey)
   router.POST("/survey", surveySubmit)
   router.GET("/work/:work_id", work)
+  router.POST("/work/preference", newPreference)
   router.ServeFiles("/static/*filepath", http.Dir("./static/"))
 
   // ParseWorksCSV("../../../perm_coll_filtered_20170201.csv")
