@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>{{ .Site }}</title>
+    {{ template "sources" }}
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+	<div class="col-xs-12">
+    
+    {{ template "header" . }}
+    <h2>Visualization - Likes</h2>
+    <h3>{{ index .Data "data" }}</h3>
+    {{ template "footer" }}
+    </div>
+      </div>
+    </div>
+  </body>
+</html>
