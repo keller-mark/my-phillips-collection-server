@@ -1,5 +1,6 @@
 var workList = [];
 var $select;
+var $table;
 
 routie({
   '/': showChoices,
@@ -32,6 +33,46 @@ function visLikesAndDislikes() {
 
 
   $("#visualizationTitle").html("By Likes and Dislikes");
+  $("#visualizationTitle").append("<br><br><p>Filter: &nbsp;<select id='ageFilter'></select>&nbsp; &nbsp;<select id='genderFilter'></select>&nbsp; &nbsp;<select id='countryFilter'></select> &nbsp; &nbsp;<button id='filterPrefs' class='btn btn-sm'>Go</button></p><br>");
+  
+  $("#ageFilter").append("<option value='none'>Age...</option>");
+  $("#genderFilter").append("<option value='none'>Gender...</option>");
+  $("#countryFilter").append("<option value='none'>Country...</option>");
+  fillInSelects();
+  $("#filterPrefs").on("click", function(e) {
+    console.log("Filtering...");
+    $.post({
+      url: "/visualize/filtered-likes",
+      data: {age: $("#ageFilter").val(), gender: $("#genderFilter").val(), country: $("#countryFilter").val()},
+      success: function(data) {
+	console.log("Filtered data...");
+	var numWorks = Object.keys(data).length;
+	var tableDataSet = new Array(numWorks);
+	var i = 0;
+	$.each(data, function(key, value) {
+	  console.log(key);
+	  console.log(value);
+	  console.log(i);
+	  tableDataSet[i] = new Array(5);
+	  tableDataSet[i][0] = "" + value["Likes"];
+	  tableDataSet[i][1] = "" + value["Dislikes"];
+	  tableDataSet[i][2] = "" + (value["Likes"] - value["Dislikes"]);
+	  tableDataSet[i][3] = value["TheWork"]["Title"];
+	  tableDataSet[i][4] = value["TheWork"]["Maker"];
+	  tableDataSet[i][5] = value["TheWork"]["Year"];
+
+	  i++;
+	});
+
+	$table.clear();
+	$table.rows.add(tableDataSet);
+	$table.draw();
+	
+      },
+      dataType: "json"
+    });
+  });
+  
   
   $.ajax({
     url: "/visualize/likes",
@@ -56,7 +97,7 @@ function visLikesAndDislikes() {
       });
 
       $("#visualizationData").html("<table id='visualizationTable' class='table table-striped' width='100%'></table>");
-      $("#visualizationTable").DataTable({
+      $table = $("#visualizationTable").DataTable({
 	data: tableDataSet,
 	columns: [
 	  { title: "Likes"},
@@ -175,5 +216,22 @@ function loadWorkStats(id) {
 
     },
     dataType: "json"
+  });
+}
+
+
+function fillInSelects() {
+  $.each(ageStrings, function(key, val) {
+    $("#ageFilter").append("<option value='" + key + "'>" + val + "</option>");
+  });
+  $.each(genderStrings, function(key, val) {
+    $("#genderFilter").append("<option value='" + key + "'>" + val + "</option>");
+  });
+  $.ajax({
+    url: "/static/js/countryoptions.txt",
+    success: function(data) {
+      $("#countryFilter").append(data);
+    },
+    dataType: "html"
   });
 }

@@ -38,5 +38,8 @@
   background-color: rgba(255, 0, 0, 0.3);
 }
 
-
+#visualizationTitle p button {
+  display: inline-block;
+  
+}
 

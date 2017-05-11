@@ -155,6 +155,53 @@ func visualizeLikes(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
   w.Write(b)
 }
 
+func visualizeFilteredLikes(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+  db := DB()
+  
+  type WorkData struct {
+    TheWork     Work
+    Likes	int
+    Dislikes	int
+  }
+  allWorkData := make(map[string]WorkData)
+
+  preferences := []Preference{}
+  db.Model(&Preference{}).Find(&preferences);
+  for _, preference := range preferences {
+    user := User{}
+    db.Find(&user, preference.User_id)
+    if((r.FormValue("age") == "none" || r.FormValue("age") == fmt.Sprint(user.Age)) && (r.FormValue("gender") == "none" || r.FormValue("gender") == fmt.Sprint(user.Gender)) && (r.FormValue("country") == "none" || r.FormValue("country") == user.Country)) {
+      if _, ok := allWorkData[fmt.Sprint(preference.Work_id)]; !ok { 
+	work := Work{}
+	db.Model(&Work{}).Where("id = ?", preference.Work_id).Find(&work)
+	workData := WorkData{}
+	workData.TheWork = work;
+	if preference.Liked == 1 {
+	  workData.Likes = 1
+	  workData.Dislikes = 0
+	} else {
+	  workData.Likes = 0
+	  workData.Dislikes = 1
+	}
+	allWorkData[fmt.Sprint(work.ID)] = workData
+      } else {
+	
+	workData := allWorkData[fmt.Sprint(preference.Work_id)]
+	if preference.Liked == 1 {
+	  workData.Likes++
+	} else {
+	  workData.Dislikes++
+	}
+	allWorkData[fmt.Sprint(preference.Work_id)] = workData
+      }
+    }
+  }
+
+  b, _ := json.Marshal(allWorkData)
+  
+  w.Header().Set("Content-Type", "application/json")
+  w.Write(b)
+}
 func visualizeWorkList(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
   db := DB();
 
@@ -319,7 +366,8 @@ func main() {
   router.GET("/visualize/likes", visualizeLikes)
   router.GET("/visualize/work-list", visualizeWorkList)
   router.GET("/visualize/work/:work_id", visualizeWork)
-
+  router.POST("/visualize/filtered-likes", visualizeFilteredLikes)
+  
   router.ServeFiles("/static/*filepath", http.Dir("./static/"))
 
   // ParseWorksCSV("../../../perm_coll_filtered_20170201.csv")
