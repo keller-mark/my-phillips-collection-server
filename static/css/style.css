@@ -4,3 +4,39 @@
 .home-footer {
   text-align: center;
 }
+
+.individual-work-img {
+}
+#visualizationData .col-xs-6 {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.innertable {
+  width: 100%;
+  vertical-align: top;
+}
+.innertable td{
+  text-align: right;
+}
+#visualizationData table.col-xs-6 th{
+  vertical-align: top;
+}
+
+#visualizationData table.col-xs-6 tr{
+  border-bottom: 1px solid gray;
+}
+
+#visualizationData table.col-xs-6 td{
+  text-align: right;
+}
+
+#visualizationData table.col-xs-6 > tr:nth-child(3n - 2){
+  background-color: rgba(0, 255, 0, 0.3);
+}
+
+#visualizationData table.col-xs-6 > tr:nth-child(3n - 1){
+  background-color: rgba(255, 0, 0, 0.3);
+}
+
+
+
