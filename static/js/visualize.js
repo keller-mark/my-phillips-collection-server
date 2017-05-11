@@ -10,8 +10,9 @@ routie({
 });
 
 $(document).ready(function() {
+if(window.location.hash == '') {
   routie('/');
-
+}
 });
 
 
